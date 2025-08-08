@@ -12,20 +12,26 @@
 #include <unistd.h>
 
 #include "luxyd-ai-ioctl.h"
+#include "common.h"
 
 #define DRIVER_NAME	"luxyd-ai"
 
 int luxyd_dev_open(const char *devname)
 {
-	int fd;
+	if (strcmp(devname, "luxyd-ai-test") == 0) {
+		printf("Running in luxyd_dev_open\n");
+		return 1024;
+	}
+	else {
+		int fd;
 
-	fd = open(devname, O_RDWR);
-	if (fd < 0)
-		printf("[%s] cannot open device file %s\n", DRIVER_NAME, devname);
-	else
-		printf("[%s] device file %s opened\n", DRIVER_NAME, devname);
-
-	return fd;
+			fd = open(devname, O_RDWR);
+			if (fd < 0)
+				printf("[%s] cannot open device file %s\n", DRIVER_NAME, devname);
+			else
+				printf("[%s] device file %s opened\n", DRIVER_NAME, devname);
+			return fd;
+	}
 }
 
 void *luxyd_dev_init(int fd, int *mmap_size)
@@ -33,6 +39,10 @@ void *luxyd_dev_init(int fd, int *mmap_size)
 	unsigned long page_size;
 	void *mmap_ptr;
 
+	if (fd == FD_TEST_VALUE) {
+		printf("Running in luxyd_dev_init\n");
+
+	}
 	page_size = sysconf(_SC_PAGE_SIZE);
 	*mmap_size = (*mmap_size + page_size - 1) & ~(page_size - 1);
 

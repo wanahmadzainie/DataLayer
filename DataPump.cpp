@@ -6,12 +6,11 @@
 #include "MemTrack.h" // Memory tracking header
 #include "Matrix.h"
 #include "common.h"
+#include "InterfaceKernel.h"
 #include "Persistence.h"
 #include "MatrixAllocation.h"
 #include "ProgramArguments.h"
 
-
-constexpr int EXECUTE_TEST = 0; // testing mode of execution mode
 
 Operation* generate_single_operation_test_data (
 	int _matrix1_row_count, int _matrix1_col_count,
@@ -326,6 +325,19 @@ int execute_program(int argc, char* argv[], Operation* _operation_list_to_return
 	if (DEBUG_OPERATIONS) {
 		print_all_operations(_operation_list_to_return);
 	}
+
+	if (TEST_IOCTL) {
+		if (!_operation_list_to_return) {
+			return EXIT_FAILURE;
+		}
+
+		Operation *current_operation = _operation_list_to_return;
+		do {
+			result = test_luxyd(current_operation);
+			current_operation = current_operation->next;
+		} while (current_operation->next != nullptr);
+
+	}
     return result;
 
 }
@@ -333,16 +345,16 @@ int execute_program(int argc, char* argv[], Operation* _operation_list_to_return
 
 // this is the main program
 int main(int argc, char* argv[]) {
-
 	int result = EXIT_FAILURE;
 	Operation* operation_list = nullptr;
 
-    if (EXECUTE_TEST) {
-	    result = execute_test(argc, argv); // Execute test if flag is set
-    	return result;
-    }
-	result = execute_program(argc, argv, operation_list); // Execute main program logic
-	//report_leaks("Final exit in main\n"); // Report memory leaks at the end of the program
-
+	if (EXECUTE_TEST) {
+		result = execute_test(argc, argv); // Execute test if flag is set
+		return result;
+	}
+	else {
+		result = execute_program(argc, argv, operation_list); // Execute main program logic
+		//report_leaks("Final exit in main\n"); // Report memory leaks at the end of the program
+	}
 	return 0;
 }

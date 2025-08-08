@@ -2,22 +2,22 @@
 
 #ifndef COMMON_H
 #define COMMON_H
-#include <cstddef>
+#include <stddef.h>
 
 #define NEW_STRUCTURE				1
+#define ARBITRARY_SIZE              1024
 
 #define MSG_SYSTEM_OUTPUT			0
 #define MSG_ERROR_OUTPUT			1
-
-#define SINGLE_INSTANCE				1	
 
 #define MAX_OPERATION_COUNT			1000 // Maximum number of operations in a matrix operation
 #define MAX_ROW_STRING_LENGTH		4096
 #define MAX_MEMORY_ALLOCATIONS		4096 // Maximum number of memory allocations to track
 #define MAX_FILENAME_LENGTH			256 // Maximum length for filenames
 
-#define FAIL	-1
-#define SUCCESS 0
+#define FD_TEST_VALUE               (-1024)
+#define RETURN_FAILURE	            (-1)
+#define RETURN_SUCCESS              (0)
 
 #define SINGLE_INSTANCE				1
 #define MATRIX_TYPE_OPERAND			0
