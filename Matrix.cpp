@@ -75,6 +75,7 @@ int print_all_operations(Operation* _operation_list) {
 
 	return EXIT_SUCCESS;
 }
+
 // Safe element access with bounds checking
 unsigned short matrix_get_ushort(const Matrix* m, int row, int col) {
 	if (row < 0 || row >= m->rows || col < 0 || col >= m->cols) {

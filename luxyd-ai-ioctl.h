@@ -31,10 +31,16 @@ struct matrix_info {
 #define LUXYD_AI_MATRIX_LOAD		_IOW(LUXYD_AI_IOCTL_MAGIC, 4, struct matrix_info)
 #define LUXYD_AI_MATRIX_MULTIPLY	_IOW(LUXYD_AI_IOCTL_MAGIC, 5, __u32)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 int luxyd_dev_open(const char *devname);
 void *luxyd_dev_init(int fd, int *mmap_size);
 int luxyd_dev_matrix_load(int fd, void *mmap_ptr, struct matrix_info *matrix_info);
 int luxyd_dev_matrix_multiply(int fd, void *mmap_ptr, struct matrix_info *matrix_info);
 int luxyd_dev_close(int fd, void *mmap_ptr, int mmap_size);
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _UAPI_LINUX_LUXYD_AI_IOCTL_H */

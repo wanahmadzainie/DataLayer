@@ -272,7 +272,7 @@ int deallocate_matrix(Matrix* _matrix) {
 		printf("Deallocated memory for Matrix: %d bytes that was remaining\n", tmp_memory_size);
 	}
 
-	return SUCCESS;
+	return RETURN_SUCCESS;
 }
 
 int deallocate_operation(Operation* _operation) {
