@@ -24,4 +24,6 @@ add_executable(DataLayer
         InterfaceKernel.h
         InterfaceOrchestration.cpp
         InterfaceOrchestration.h
+        luxyd-ai-ioctl.c
+        luxyd-ai-ioctl.h
 )

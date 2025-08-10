@@ -3,13 +3,14 @@
 //
 #include "Matrix.h"
 #include "common.h"
-#include "luxyd-ai-ioctl.h"
-#include "InterfaceKernel.h"
-#include "MemTrack.h"
-
 #include <assert.h>
 #include <cstdio>
 #include <stdlib.h>
+
+#include "InterfaceKernel.h"
+#include "MemTrack.h"
+#include "luxyd-ai-ioctl.h"
+
 
 #include "luxyd-ai-ioctl.h"
 // interface layer function to send matrix data to kernel module for multiplication operation
