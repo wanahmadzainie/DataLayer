@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstring>
 #include <stdlib.h>
+#include <time.h>
 
 #include "InterfaceKernel.h"
 #include "MemTrack.h"
@@ -76,6 +77,8 @@ int test_luxyd(const Operation* _operation) {
     int             size_a = _operation->operand1->rows * _operation->operand1->cols * sizeof(__u16);
     int             size_b = _operation->operand2->rows * _operation->operand2->cols * sizeof(__u16);
     int             size_p = _operation->operand1->rows * _operation->operand2->cols * sizeof(__u32);
+    struct timespec start, end;
+    double          elapsed_secs;
 
     matrix_info*    matrix_info = convert_operation_to_matrix_info(_operation);
     if (matrix_info == nullptr) {
@@ -96,13 +99,18 @@ int test_luxyd(const Operation* _operation) {
     if (result > 0) {
         printf("Ok\n");
     }
+    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
     result = luxyd_dev_matrix_multiply(fd, buffer, matrix_info);
+    clock_gettime(CLOCK_MONOTONIC_RAW, &end);
     if (result > 0) {
         printf("Ok\n");
     }
 
     /* copy result from device mmapped memory to local buffer */
     memcpy(_operation->result->data->uint_data, (__u32 *)((char *)buffer + MAT_P_OFFSET), size_p);
+
+    elapsed_secs = (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
+    fprintf(stdout, "Time taken by luxyd_dev_matrix_multiply: %.9f seconds\n", elapsed_secs);
 
     result = luxyd_dev_close(fd, buffer, buffer_size);
 
