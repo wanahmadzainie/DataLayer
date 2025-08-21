@@ -207,6 +207,13 @@ Matrix* calc_matrix_multiplication(Matrix* _operand1, Matrix* _operand2, Matrix*
 			for (int common_dim = 0; common_dim < common_dim_count; ++common_dim) {                   // _matrix1->cols = _matrix2->rows
 				unsigned short int a = matrix_get_ushort(_operand1, row_counter, common_dim);
 				unsigned short int b = matrix_get_ushort(_operand2, common_dim, col_counter);
+
+				/* check for integer overflow after addition */
+				if ((sum + a * b) < sum) {
+					fprintf(stderr, "Overflow during multiplication\n");
+					return NULL;
+				}
+
 				sum += a * b;
 			}
 			matrix_set_uint(_result_matrix, row_counter, col_counter, sum); // Store result in the result matrix data
