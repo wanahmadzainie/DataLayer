@@ -53,14 +53,15 @@ matrix_info* convert_operation_to_matrix_info(const Operation* _operation) {
     this_matrix_info->n = result_col_size;
     this_matrix_info->p = operand1_operand2_common_dimension;
 
-    this_matrix_info->a_ptr = _operation->operand1->data->ushort_data;
-    this_matrix_info->b_ptr = _operation->operand2->data->ushort_data;
-    this_matrix_info->p_ptr = _operation->result->data->uint_data;
+    /* unused for the time being, to be removed */
+    this_matrix_info->addr_a = 0;
+    this_matrix_info->addr_b = 0;
+    this_matrix_info->addr_p = 0;
 
     return (matrix_info*) this_matrix_info;
 }
 
-#define test_dev_open_name	"luxyd-ai-test"
+#define test_dev_open_name	"/dev/luxyd-ai"
 
 int test_luxyd(const Operation* _operation) {
 
@@ -68,11 +69,12 @@ int test_luxyd(const Operation* _operation) {
     unsigned int    max_row_size = 40;
     unsigned int    max_col_size = 40;
     unsigned int    matrix_count_per_operation = 3;
-    unsigned int    temp_buffer_size = (max_row_size * max_col_size * matrix_count_per_operation) * sizeof(__u32) ;
+    /* fixed size, follows the allocated fpga's matrices size */
+    unsigned int    temp_buffer_size = 4096 * sizeof(__u16) * 2 + 4096 * sizeof(__u32);
     int             buffer_size = int(temp_buffer_size);
 
     matrix_info*    matrix_info = convert_operation_to_matrix_info(_operation);
-    if (matrix_info != nullptr) {
+    if (matrix_info == nullptr) {
         fprintf(stderr, "Operation to matrix info conversion failed\n");
         return RETURN_FAILURE;
     }
