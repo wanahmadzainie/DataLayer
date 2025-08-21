@@ -5,6 +5,7 @@
 #include "common.h"
 #include <assert.h>
 #include <cstdio>
+#include <cstring>
 #include <stdlib.h>
 
 #include "InterfaceKernel.h"
@@ -72,6 +73,9 @@ int test_luxyd(const Operation* _operation) {
     /* fixed size, follows the allocated fpga's matrices size */
     unsigned int    temp_buffer_size = 4096 * sizeof(__u16) * 2 + 4096 * sizeof(__u32);
     int             buffer_size = int(temp_buffer_size);
+    int             size_a = _operation->operand1->rows * _operation->operand1->cols * sizeof(__u16);
+    int             size_b = _operation->operand2->rows * _operation->operand2->cols * sizeof(__u16);
+    int             size_p = _operation->operand1->rows * _operation->operand2->cols * sizeof(__u32);
 
     matrix_info*    matrix_info = convert_operation_to_matrix_info(_operation);
     if (matrix_info == nullptr) {
@@ -84,6 +88,10 @@ int test_luxyd(const Operation* _operation) {
 
     void* buffer = luxyd_dev_init(fd, &buffer_size);
 
+    /* copy input matrices to device mmapped memory */
+    memcpy((__u16 *)((char *)buffer + MAT_A_OFFSET), _operation->operand1->data->ushort_data, size_a);
+    memcpy((__u16 *)((char *)buffer + MAT_B_OFFSET), _operation->operand2->data->ushort_data, size_b);
+
     result = luxyd_dev_matrix_load(fd, buffer, matrix_info);
     if (result > 0) {
         printf("Ok\n");
@@ -92,6 +100,9 @@ int test_luxyd(const Operation* _operation) {
     if (result > 0) {
         printf("Ok\n");
     }
+
+    /* copy result from device mmapped memory to local buffer */
+    memcpy(_operation->result->data->uint_data, (__u32 *)((char *)buffer + MAT_P_OFFSET), size_p);
 
     result = luxyd_dev_close(fd, buffer, buffer_size);
 
