@@ -95,7 +95,9 @@ unsigned int generate_truly_random_uint(void) {
 unsigned short generate_random_ushort(void) {
     unsigned int r1 = (unsigned int) generate_truly_random_uint(); //todo: use better random number generator
     unsigned int r2 = (unsigned int) generate_truly_random_uint();
-    return (unsigned short int) (((r1 >> 7) << 8) | (r2 >> 7));
+    //return (unsigned short int) (((r1 >> 7) << 8) | (r2 >> 7));
+    /* temporarily limit the range from 0 to 4095 */
+    return (unsigned short int) ((((r1 >> 7) << 8) | (r2 >> 7)) & 0xfff);
 }
 
 char *ushort_to_string(unsigned short int num) {
