@@ -51,9 +51,9 @@ matrix_info* convert_operation_to_matrix_info(const Operation* _operation) {
     operand1_operand2_common_dimension = _operation->operand1->cols;
 
     // set the dimension info
-    this_matrix_info->m = result_row_size;
-    this_matrix_info->n = result_col_size;
-    this_matrix_info->p = operand1_operand2_common_dimension;
+    this_matrix_info->m = _operation->operand1->rows;
+    this_matrix_info->n = _operation->operand1->cols;
+    this_matrix_info->p = _operation->operand2->cols;
 
     /* unused for the time being, to be removed */
     this_matrix_info->addr_a = 0;
@@ -106,8 +106,20 @@ int test_luxyd(const Operation* _operation) {
         printf("Ok\n");
     }
 
+    /*
+     * compare the result calculated by the application, stored in the local memory with
+     * the result calculated by the fpga card, stored in device mmapped memory
+     */
+    result = memcmp(_operation->result->data->uint_data, (__u32 *)((char *)buffer + MAT_P_OFFSET),
+		    size_p);
+    if (result == 0)
+	    fprintf(stdout, "Operation %d passed\n", _operation->operation_id);
+    else
+	    fprintf(stderr, "Operation %d failed\n", _operation->operation_id);
+
     /* copy result from device mmapped memory to local buffer */
-    memcpy(_operation->result->data->uint_data, (__u32 *)((char *)buffer + MAT_P_OFFSET), size_p);
+    memcpy(_operation->result->data->uint_data, (__u32 *)((char *)buffer + MAT_P_OFFSET),
+	   size_p);
 
     elapsed_secs = (end.tv_sec - start.tv_sec) + (double)(end.tv_nsec - start.tv_nsec) / 1e9;
     fprintf(stdout, "Time taken by luxyd_dev_matrix_multiply: %.9f seconds\n", elapsed_secs);
